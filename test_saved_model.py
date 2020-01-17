@@ -41,4 +41,4 @@ model.summary()
 
 seed = tf.random.normal([examples_width * examples_height, noise_dim])
 
-generate_and_save_images(model, 'test', seed)
+generate_and_save_images(model, 'test', seed, save=False)

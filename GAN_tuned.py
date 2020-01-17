@@ -34,7 +34,7 @@ train_images = train_images.reshape(train_images.shape[0], 28, 28, 1).astype('fl
 train_images = (train_images - 127.5) / 127.5 # normalize the images to [-1,1]
 
 BUFFER_SIZE = 60000
-BATCH_SIZE = 256
+BATCH_SIZE = 128
 
 allowed_labels = [7]
 
@@ -122,9 +122,9 @@ def discriminator_loss(real_output, fake_output):
 def generator_loss(fake_output):
     return cross_entropy(tf.ones_like(fake_output), fake_output)
 
-learning_rate = 1e-4
+#learning_rate = 1e-4
 #learning_rate = 0.0002
-#learning_rate = 0.001
+learning_rate = 0.001
 
 generator_optimizer = tf.keras.optimizers.Adam(learning_rate)
 discriminator_optimizer = tf.keras.optimizers.Adam(learning_rate)
@@ -136,7 +136,7 @@ checkpoint = tf.train.Checkpoint(generator_optimizer = generator_optimizer,
                                  generator=generator,
                                  discriminator=discriminator)
 
-EPOCHS = 50
+EPOCHS = 500
 noise_dim = 100
 #How many images should be created for image saving
 examples_width = 10
@@ -144,7 +144,7 @@ examples_height = 10
 
 seed = tf.random.normal([examples_width * examples_height, noise_dim])
 
-model_name = 'mnist_default'
+model_name = 'mnist_tuned'
 img_dir = model_name + '_images'
 model_save_dir = 'trained_generator'
 
