@@ -23,18 +23,18 @@ from tensorflow import keras
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Activation
 
-#(train_images, train_labels), (_, _) = tf.keras.datasets.mnist.load_data()
+(train_images, train_labels), (_, _) = tf.keras.datasets.mnist.load_data()
 #Fashon mnist:
 #Labels: 0 Tshirt/Top, 1 Trouser, 2 Pullover, 3 Dress, 4 Coat
 #       5 Sandal, 6 shirt, 7 sneakers, 8 bag, 9 Ankle boot
 # src: https://jovianlin.io/datasets-within-keras/, https://keras.io/datasets/
-(train_images, train_labels), (_, _) = tf.keras.datasets.fashion_mnist.load_data()
+#(train_images, train_labels), (_, _) = tf.keras.datasets.fashion_mnist.load_data()
 
 train_images = train_images.reshape(train_images.shape[0], 28, 28, 1).astype('float32')
 train_images = (train_images - 127.5) / 127.5 # normalize the images to [-1,1]
 
 BUFFER_SIZE = 60000
-BATCH_SIZE = 128
+BATCH_SIZE = 256
 
 allowed_labels = [7]
 
