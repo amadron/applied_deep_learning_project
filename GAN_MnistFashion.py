@@ -136,7 +136,7 @@ checkpoint = tf.train.Checkpoint(generator_optimizer = generator_optimizer,
                                  generator=generator,
                                  discriminator=discriminator)
 
-EPOCHS = 500
+EPOCHS = 5
 noise_dim = 100
 #How many images should be created for image saving
 examples_width = 10
@@ -145,6 +145,8 @@ examples_height = 10
 seed = tf.random.normal([examples_width * examples_height, noise_dim])
 
 img_dir = 'mnist_default_result'
+model_save_dir = 'trained_generator'
+model_name = 'mnist_default'
 
 folder_exist = os.path.isdir(img_dir)
 if not folder_exist:
@@ -215,6 +217,15 @@ display_image(EPOCHS)
 
 anim_file = 'dcgan.gif'
 
+folder_exist = os.path.isdir(model_save_dir)
+if not folder_exist:
+    os.makedirs(model_save_dir)
+    print("Created folder ", img_dir)
+
+
+generator.save(model_save_dir + '/' + model_name + '.h5')
+print('Model saved in: ' + model_save_dir + '/' + model_name + '.h5')
+
 with imageio.get_writer(img_dir+'/'+anim_file, mode='I') as writer:
     filenames = glob.glob(img_dir+'/image*.png')
     filenames = sorted(filenames)
@@ -229,8 +240,8 @@ with imageio.get_writer(img_dir+'/'+anim_file, mode='I') as writer:
         writer.append_data(image)
     image = imageio.imread(filename)
     writer.append_data(image)
-    
+
 import IPython
 
 if IPython.version_info > (6,2,0,''):
-    display.Image(filename=anim_file)
+    display.Image(filename=img_dir+'/'+anim_file)
