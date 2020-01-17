@@ -217,7 +217,7 @@ def display_image(epoch_no):
 
 display_image(EPOCHS)
 
-anim_file = 'dcgan.gif'
+anim_file = model_name+'.gif'
 
 folder_exist = os.path.isdir(model_save_dir)
 if not folder_exist:
