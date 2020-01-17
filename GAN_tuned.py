@@ -34,7 +34,7 @@ train_images = train_images.reshape(train_images.shape[0], 28, 28, 1).astype('fl
 train_images = (train_images - 127.5) / 127.5 # normalize the images to [-1,1]
 
 BUFFER_SIZE = 60000
-BATCH_SIZE = 128
+BATCH_SIZE = 256
 
 allowed_labels = [7]
 
@@ -125,6 +125,8 @@ def generator_loss(fake_output):
 #learning_rate = 1e-4
 #learning_rate = 0.0002
 learning_rate = 0.001
+#learning_rate_gen = 0.001
+#learning_rate_disc = 0.0002
 
 generator_optimizer = tf.keras.optimizers.Adam(learning_rate)
 discriminator_optimizer = tf.keras.optimizers.Adam(learning_rate)
@@ -136,15 +138,15 @@ checkpoint = tf.train.Checkpoint(generator_optimizer = generator_optimizer,
                                  generator=generator,
                                  discriminator=discriminator)
 
-EPOCHS = 500
+EPOCHS = 1000
 noise_dim = 100
 #How many images should be created for image saving
-examples_width = 10
-examples_height = 10
+examples_width = 5
+examples_height = 5
 
 seed = tf.random.normal([examples_width * examples_height, noise_dim])
 
-model_name = 'mnist_tuned'
+model_name = 'mnist_tuned_batch_256_lr_001'
 img_dir = model_name + '_images'
 model_save_dir = 'trained_generator'
 
@@ -185,8 +187,8 @@ def train(dataset, epochs):
         #generate_and_save_images(generator, epoch + 1, seed)
         
         #Save model every 15 epoch
-        if (epoch + 1) % 15 == 0:
-            checkpoint.save(file_prefix = checkpoint_prefix)
+        #if (epoch + 1) % 15 == 0:
+            #checkpoint.save(file_prefix = checkpoint_prefix)
         #if (epoch + 1) % 10 == 0:
         generate_and_save_images(generator, epoch + 1, seed)
         print('Time for epoch {} is {} sec'.format(epoch+1, time.time()-start))
