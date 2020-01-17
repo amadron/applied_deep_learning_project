@@ -123,8 +123,8 @@ def generator_loss(fake_output):
     return cross_entropy(tf.ones_like(fake_output), fake_output)
 
 learning_rate = 1e-4
-learning_rate = 0.0002
-learning_rate = 0.001
+#learning_rate = 0.0002
+#learning_rate = 0.001
 
 generator_optimizer = tf.keras.optimizers.Adam(learning_rate)
 discriminator_optimizer = tf.keras.optimizers.Adam(learning_rate)
@@ -136,15 +136,15 @@ checkpoint = tf.train.Checkpoint(generator_optimizer = generator_optimizer,
                                  generator=generator,
                                  discriminator=discriminator)
 
-EPOCHS = 70
+EPOCHS = 500
 noise_dim = 100
 #How many images should be created for image saving
-examples_width = 3
-examples_height = 3
+examples_width = 10
+examples_height = 10
 
 seed = tf.random.normal([examples_width * examples_height, noise_dim])
 
-img_dir = 'result'
+img_dir = 'mnist_default_result'
 
 folder_exist = os.path.isdir(img_dir)
 if not folder_exist:
@@ -215,7 +215,7 @@ display_image(EPOCHS)
 
 anim_file = 'dcgan.gif'
 
-with imageio.get_writer(anim_file, mode='I') as writer:
+with imageio.get_writer(img_dir+'/'+anim_file, mode='I') as writer:
     filenames = glob.glob(img_dir+'/image*.png')
     filenames = sorted(filenames)
     last = -1
