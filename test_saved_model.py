@@ -5,9 +5,11 @@ Created on Fri Jan 17 15:12:33 2020
 @author: br-182508
 """
 import tensorflow as tf
+import matplotlib.pyplot as plt
+import os
 
 model_load_dir = 'trained_generator'
-model_name = 'mnist_default'
+model_name = 'mnist_tuned_batch_256_lr_001'
 
 img_dir = 'generator_test'
 
@@ -41,4 +43,4 @@ model.summary()
 
 seed = tf.random.normal([examples_width * examples_height, noise_dim])
 
-generate_and_save_images(model, 'test', seed, save=False)
+generate_and_save_images(model, model_name, seed, save=True)

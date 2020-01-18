@@ -57,35 +57,22 @@ train_dataset = tf.data.Dataset.from_tensor_slices(train_images).shuffle(BUFFER_
 #Generator
 def make_generator_model():
     model = tf.keras.Sequential()
-    model.add(layers.Dense(7*7*512, use_bias=False, input_shape=(100,)))
+    model.add(layers.Dense(7*7*256, use_bias=False, input_shape=(100,)))
     model.add(layers.BatchNormalization())
     model.add(layers.LeakyReLU())
     
-    model.add(layers.Reshape((7, 7, 512)))
-    assert model.output_shape == (None, 7, 7, 512)
-    
-    model.add(layers.Conv2DTranspose(512, (5,5), strides=(1,1), padding='same', use_bias=False))
-    model.add(layers.BatchNormalization())
-    model.add(layers.LeakyReLU())
-    model.add(layers.Conv2D(512, (5,5), padding='same'))
-    
-    model.add(layers.Conv2DTranspose(256, (5,5), strides=(1,1), padding='same', use_bias=False))
-    assert model.output_shape == (None, 7,7, 256)
-    model.add(layers.BatchNormalization())
-    model.add(layers.LeakyReLU())
-    model.add(layers.Conv2D(256, (5,5), padding='same'))
+    model.add(layers.Reshape((7, 7, 256)))
+    assert model.output_shape == (None, 7, 7, 256)
     
     model.add(layers.Conv2DTranspose(128, (5,5), strides=(1,1), padding='same', use_bias=False))
     assert model.output_shape == (None, 7,7, 128)
     model.add(layers.BatchNormalization())
     model.add(layers.LeakyReLU())
-    model.add(layers.Conv2D(128, (5,5), padding='same'))
     
     model.add(layers.Conv2DTranspose(64, (5,5), strides=(2,2), padding='same', use_bias=False))
+    assert model.output_shape == (None, 14, 14, 64)
     model.add(layers.BatchNormalization())
     model.add(layers.LeakyReLU())
-    assert model.output_shape == (None, 14, 14, 64)
-    model.add(layers.Conv2D(64, (5,5), padding='same'))
     
     model.add(layers.Conv2DTranspose(1, (5,5), strides=(2,2), padding='same', use_bias=False, activation='tanh'))
     assert model.output_shape == (None, 28, 28, 1)
@@ -106,27 +93,27 @@ plt.show()
 def make_discriminator_model():
     model = tf.keras.Sequential()
     model.add(layers.Conv2D(64, (5,5), strides=(2,2), padding='same', input_shape=(28, 28, 1)))
-   # model.add(layers.Conv2D(64, (3,3), padding='same', activation='relu'))
+    model.add(layers.Conv2D(64, (3,3), padding='same', activation='relu'))
     model.add(layers.Conv2D(64, (3,3), activation='relu', padding='same'))
     
     model.add(layers.MaxPooling2D((2,2), strides=(2,2), padding='same'))
     
     model.add(layers.Conv2D(128, (3,3), activation='relu', padding='same'))
-   # model.add(layers.Conv2D(128, (3,3), activation='relu', padding='same'))
+    model.add(layers.Conv2D(128, (3,3), activation='relu', padding='same'))
     model.add(layers.MaxPooling2D((2,2), strides=(2,2), padding='same'))
     
     model.add(layers.Conv2D(256, (3,3), activation='relu', padding='same'))
-   # model.add(layers.Conv2D(256, (3,3), activation='relu', padding='same'))
+    model.add(layers.Conv2D(256, (3,3), activation='relu', padding='same'))
     model.add(layers.Conv2D(256, (3,3), activation='relu', padding='same'))
     model.add(layers.MaxPooling2D((2,2), strides=(2,2), padding='same'))
     
     model.add(layers.Conv2D(512, (3,3), activation='relu', padding='same'))
- #   model.add(layers.Conv2D(512, (3,3), activation='relu', padding='same'))
+    model.add(layers.Conv2D(512, (3,3), activation='relu', padding='same'))
     model.add(layers.Conv2D(512, (3,3), activation='relu', padding='same'))
     model.add(layers.MaxPooling2D((2,2), strides=(2,2), padding='same'))
     
     model.add(layers.Conv2D(512, (3,3), activation='relu', padding='same'))
- #   model.add(layers.Conv2D(512, (3,3), activation='relu', padding='same'))
+    model.add(layers.Conv2D(512, (3,3), activation='relu', padding='same'))
     model.add(layers.Conv2D(512, (3,3), activation='relu', padding='same'))
     model.add(layers.MaxPooling2D((2,2), strides=(2,2), padding='same'))
     
@@ -156,7 +143,8 @@ def generator_loss(fake_output):
     return cross_entropy(tf.ones_like(fake_output), fake_output)
 
 learning_rate = 1e-4
-learning_rate = 0.0002
+#learning_rate = 0.0002
+#learning_rate = 0.001
 
 generator_optimizer = tf.keras.optimizers.Adam(learning_rate)
 discriminator_optimizer = tf.keras.optimizers.Adam(learning_rate)
@@ -168,15 +156,17 @@ checkpoint = tf.train.Checkpoint(generator_optimizer = generator_optimizer,
                                  generator=generator,
                                  discriminator=discriminator)
 
-EPOCHS = 70
+EPOCHS = 1000
 noise_dim = 100
 #How many images should be created for image saving
-examples_width = 10
-examples_height = 10
+examples_width = 5
+examples_height = 5
 
 seed = tf.random.normal([examples_width * examples_height, noise_dim])
 
-img_dir = 'result_vgg16'
+model_name = 'vgg16_disc'
+img_dir = model_name + '_images'
+model_save_dir = 'trained_generator'
 
 folder_exist = os.path.isdir(img_dir)
 if not folder_exist:
@@ -215,8 +205,8 @@ def train(dataset, epochs):
         #generate_and_save_images(generator, epoch + 1, seed)
         
         #Save model every 15 epoch
-        if (epoch + 1) % 15 == 0:
-            checkpoint.save(file_prefix = checkpoint_prefix)
+        #if (epoch + 1) % 15 == 0:
+        #checkpoint.save(file_prefix = checkpoint_prefix)
         #if (epoch + 1) % 10 == 0:
         generate_and_save_images(generator, epoch + 1, seed)
         print('Time for epoch {} is {} sec'.format(epoch+1, time.time()-start))
@@ -245,9 +235,18 @@ def display_image(epoch_no):
 
 display_image(EPOCHS)
 
-anim_file = 'dcgan_notebook.gif'
+anim_file = 'dcgan.gif'
 
-with imageio.get_writer(anim_file, mode='I') as writer:
+folder_exist = os.path.isdir(model_save_dir)
+if not folder_exist:
+    os.makedirs(model_save_dir)
+    print("Created folder ", img_dir)
+
+
+generator.save(model_save_dir + '/' + model_name + '.h5')
+print('Model saved in: ' + model_save_dir + '/' + model_name + '.h5')
+
+with imageio.get_writer(img_dir+'/'+anim_file, mode='I') as writer:
     filenames = glob.glob(img_dir+'/image*.png')
     filenames = sorted(filenames)
     last = -1
@@ -261,8 +260,8 @@ with imageio.get_writer(anim_file, mode='I') as writer:
         writer.append_data(image)
     image = imageio.imread(filename)
     writer.append_data(image)
-    
+
 import IPython
 
 if IPython.version_info > (6,2,0,''):
-    display.Image(filename=anim_file)
+    display.Image(filename=img_dir+'/'+anim_file)

@@ -34,7 +34,7 @@ train_images = train_images.reshape(train_images.shape[0], 28, 28, 1).astype('fl
 train_images = (train_images - 127.5) / 127.5 # normalize the images to [-1,1]
 
 BUFFER_SIZE = 60000
-BATCH_SIZE = 256
+BATCH_SIZE = 64
 
 allowed_labels = [7]
 
@@ -124,7 +124,8 @@ def generator_loss(fake_output):
 
 #learning_rate = 1e-4
 #learning_rate = 0.0002
-learning_rate = 0.001
+#learning_rate = 0.001
+learning_rate = 0.01
 #learning_rate_gen = 0.001
 #learning_rate_disc = 0.0002
 
@@ -146,7 +147,7 @@ examples_height = 5
 
 seed = tf.random.normal([examples_width * examples_height, noise_dim])
 
-model_name = 'mnist_tuned_batch_256_lr_001'
+model_name = 'mnist_tuned_batch_64_lr_01'
 img_dir = model_name + '_images'
 model_save_dir = 'trained_generator'
 
